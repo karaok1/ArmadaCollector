@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29911.84
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArmadaCollector", "ArmadaCollector\ArmadaCollector.csproj", "{BCDB54A8-0436-4344-BF09-3BF17645811E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BCDB54A8-0436-4344-BF09-3BF17645811E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCDB54A8-0436-4344-BF09-3BF17645811E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCDB54A8-0436-4344-BF09-3BF17645811E}.Debug|x64.ActiveCfg = Debug|x64
+		{BCDB54A8-0436-4344-BF09-3BF17645811E}.Debug|x64.Build.0 = Debug|x64
+		{BCDB54A8-0436-4344-BF09-3BF17645811E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCDB54A8-0436-4344-BF09-3BF17645811E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCDB54A8-0436-4344-BF09-3BF17645811E}.Release|x64.ActiveCfg = Release|x64
+		{BCDB54A8-0436-4344-BF09-3BF17645811E}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {12004B7A-C017-4F5C-8C36-A1B2F093CCF8}
+	EndGlobalSection
+EndGlobal
