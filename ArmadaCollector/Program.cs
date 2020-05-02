@@ -1,5 +1,5 @@
-﻿using ArmadaCollector.Proxy;
-using Fiddler;
+﻿using ArmadaCollector.Utils;
+using Squirrel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,20 +16,13 @@ namespace ArmadaCollector
         [STAThread]
         static void Main()
         {
+
+            AppUpdater.RunUpdater();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            CertMaker.createRootCert();
-            CertMaker.trustRootCert();
-            StartBrowserProxy();
             Application.Run(new Form1());
-
             AppDomain currentDomain = AppDomain.CurrentDomain;
-        }
-
-        public static void StartBrowserProxy()
-        {
-            FiddlerProxy.Start();
         }
     }
 }

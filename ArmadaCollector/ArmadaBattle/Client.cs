@@ -14,12 +14,14 @@ namespace ArmadaCollector
         public static DateTime sessionStartTime { get; internal set; }
         public static bool running { get; internal set; }
         public static bool collecting { get; internal set; }
-        public static int previousAngle { get; internal set; }
+
+        public static int collectedGolds { get; internal set; }
         public static int collectedDiamonds { get; internal set; }
-        public static int collectedElixir { get; internal set; }
+        public static int collectedExps { get; internal set; }
+        public static int collectedElixirs { get; internal set; }
         public static int collectedGlows { get; internal set; }
-        public static string playerGold { get; internal set; }
-        public static string playerDiamond { get; internal set; }
+
         public static string playerExp { get; internal set; }
+        public static bool ready { get; internal set; } = false;
     }
 }
