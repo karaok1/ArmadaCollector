@@ -47,13 +47,26 @@ namespace ArmadaCollector
             this.label9 = new System.Windows.Forms.Label();
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.metroLabel4 = new MetroFramework.Controls.MetroLabel();
+            this.metroLabel3 = new MetroFramework.Controls.MetroLabel();
+            this.metroButton2 = new MetroFramework.Controls.MetroButton();
             this.metroTextBox1 = new MetroFramework.Controls.MetroTextBox();
             this.metroButton1 = new MetroFramework.Controls.MetroButton();
             this.metroLabel1 = new MetroFramework.Controls.MetroLabel();
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.groupBox11 = new System.Windows.Forms.GroupBox();
+            this.metroComboBoxQuantity = new MetroFramework.Controls.MetroComboBox();
+            this.label13 = new System.Windows.Forms.Label();
+            this.checkBoxBuyHollows = new System.Windows.Forms.CheckBox();
+            this.numericUpDownIfBelow = new System.Windows.Forms.NumericUpDown();
+            this.label12 = new System.Windows.Forms.Label();
+            this.groupBox10 = new System.Windows.Forms.GroupBox();
+            this.checkBoxShootBack = new System.Windows.Forms.CheckBox();
+            this.checkBoxEquipSails = new System.Windows.Forms.CheckBox();
             this.metroLabel2 = new MetroFramework.Controls.MetroLabel();
-            this.metroTrackBar1 = new MetroFramework.Controls.MetroTrackBar();
+            this.numericUpDownRestart = new System.Windows.Forms.NumericUpDown();
+            this.checkboxShootOnlyFullHp = new System.Windows.Forms.CheckBox();
             this.label6 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.rememberMeCheckbox = new System.Windows.Forms.CheckBox();
@@ -64,9 +77,6 @@ namespace ArmadaCollector
             this.label7 = new System.Windows.Forms.Label();
             this.tabPage1 = new MetroFramework.Controls.MetroTabPage();
             this.metroTabPage1 = new MetroFramework.Controls.MetroTabPage();
-            this.attackedInfoGroupbox = new System.Windows.Forms.GroupBox();
-            this.label36 = new System.Windows.Forms.Label();
-            this.label37 = new System.Windows.Forms.Label();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.label11 = new System.Windows.Forms.Label();
             this.collectedGolds = new System.Windows.Forms.Label();
@@ -82,8 +92,6 @@ namespace ArmadaCollector
             this.runtimeLabel = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox9 = new System.Windows.Forms.GroupBox();
-            this.label35 = new System.Windows.Forms.Label();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.ranklabel = new System.Windows.Forms.Label();
             this.label34 = new System.Windows.Forms.Label();
             this.levellabel = new System.Windows.Forms.Label();
@@ -93,8 +101,6 @@ namespace ArmadaCollector
             this.guildlabel = new System.Windows.Forms.Label();
             this.label28 = new System.Windows.Forms.Label();
             this.usernamelabel = new System.Windows.Forms.Label();
-            this.label25 = new System.Windows.Forms.Label();
-            this.groupBox8 = new System.Windows.Forms.GroupBox();
             this.label21 = new System.Windows.Forms.Label();
             this.gainedelixirlabel = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
@@ -103,7 +109,7 @@ namespace ArmadaCollector
             this.gaineddiamondlabel = new System.Windows.Forms.Label();
             this.buttonStart = new MetroFramework.Controls.MetroButton();
             this.updateFormTimer = new System.Windows.Forms.Timer(this.components);
-            this.metroButton2 = new MetroFramework.Controls.MetroButton();
+            this.label25 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -112,12 +118,14 @@ namespace ArmadaCollector
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.groupBox11.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownIfBelow)).BeginInit();
+            this.groupBox10.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRestart)).BeginInit();
             this.metroTabPage1.SuspendLayout();
-            this.attackedInfoGroupbox.SuspendLayout();
             this.groupBox7.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox9.SuspendLayout();
-            this.groupBox8.SuspendLayout();
             this.SuspendLayout();
             // 
             // LogBox
@@ -140,7 +148,7 @@ namespace ArmadaCollector
             this.tabControl1.Controls.Add(this.metroTabPage1);
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.SelectedIndex = 2;
             this.tabControl1.Size = new System.Drawing.Size(1014, 461);
             this.tabControl1.TabIndex = 0;
             this.tabControl1.UseSelectable = true;
@@ -215,7 +223,7 @@ namespace ArmadaCollector
             // shootnpccheckbox
             // 
             this.shootnpccheckbox.AutoSize = true;
-            this.shootnpccheckbox.Location = new System.Drawing.Point(151, 49);
+            this.shootnpccheckbox.Location = new System.Drawing.Point(151, 51);
             this.shootnpccheckbox.Name = "shootnpccheckbox";
             this.shootnpccheckbox.Size = new System.Drawing.Size(84, 17);
             this.shootnpccheckbox.TabIndex = 3;
@@ -235,7 +243,7 @@ namespace ArmadaCollector
             // shootmonstercheckbox
             // 
             this.shootmonstercheckbox.AutoSize = true;
-            this.shootmonstercheckbox.Location = new System.Drawing.Point(14, 48);
+            this.shootmonstercheckbox.Location = new System.Drawing.Point(14, 51);
             this.shootmonstercheckbox.Name = "shootmonstercheckbox";
             this.shootmonstercheckbox.Size = new System.Drawing.Size(100, 17);
             this.shootmonstercheckbox.TabIndex = 2;
@@ -286,6 +294,8 @@ namespace ArmadaCollector
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.metroLabel4);
+            this.groupBox3.Controls.Add(this.metroLabel3);
             this.groupBox3.Controls.Add(this.metroButton2);
             this.groupBox3.Controls.Add(this.metroTextBox1);
             this.groupBox3.Controls.Add(this.metroButton1);
@@ -297,6 +307,34 @@ namespace ArmadaCollector
             this.groupBox3.TabIndex = 12;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Targets";
+            // 
+            // metroLabel4
+            // 
+            this.metroLabel4.AutoSize = true;
+            this.metroLabel4.Location = new System.Drawing.Point(7, 148);
+            this.metroLabel4.Name = "metroLabel4";
+            this.metroLabel4.Size = new System.Drawing.Size(201, 19);
+            this.metroLabel4.TabIndex = 7;
+            this.metroLabel4.Text = "Right: Viking Ship (Case sensitive)";
+            // 
+            // metroLabel3
+            // 
+            this.metroLabel3.AutoSize = true;
+            this.metroLabel3.Location = new System.Drawing.Point(7, 129);
+            this.metroLabel3.Name = "metroLabel3";
+            this.metroLabel3.Size = new System.Drawing.Size(197, 19);
+            this.metroLabel3.TabIndex = 6;
+            this.metroLabel3.Text = "Wrong: viking ship (Harf duyarlı)";
+            // 
+            // metroButton2
+            // 
+            this.metroButton2.Location = new System.Drawing.Point(6, 176);
+            this.metroButton2.Name = "metroButton2";
+            this.metroButton2.Size = new System.Drawing.Size(235, 41);
+            this.metroButton2.TabIndex = 5;
+            this.metroButton2.Text = "Remove";
+            this.metroButton2.UseSelectable = true;
+            this.metroButton2.Click += new System.EventHandler(this.metroButton2_Click);
             // 
             // metroTextBox1
             // 
@@ -360,8 +398,8 @@ namespace ArmadaCollector
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.metroLabel2);
-            this.groupBox2.Controls.Add(this.metroTrackBar1);
+            this.groupBox2.Controls.Add(this.groupBox11);
+            this.groupBox2.Controls.Add(this.groupBox10);
             this.groupBox2.Controls.Add(this.label6);
             this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Controls.Add(this.rememberMeCheckbox);
@@ -377,37 +415,178 @@ namespace ArmadaCollector
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Login";
             // 
+            // groupBox11
+            // 
+            this.groupBox11.Controls.Add(this.metroComboBoxQuantity);
+            this.groupBox11.Controls.Add(this.label13);
+            this.groupBox11.Controls.Add(this.checkBoxBuyHollows);
+            this.groupBox11.Controls.Add(this.numericUpDownIfBelow);
+            this.groupBox11.Controls.Add(this.label12);
+            this.groupBox11.Location = new System.Drawing.Point(227, 170);
+            this.groupBox11.Name = "groupBox11";
+            this.groupBox11.Size = new System.Drawing.Size(205, 181);
+            this.groupBox11.TabIndex = 11;
+            this.groupBox11.TabStop = false;
+            this.groupBox11.Text = "Buy Ammo";
+            // 
+            // metroComboBoxQuantity
+            // 
+            this.metroComboBoxQuantity.FormattingEnabled = true;
+            this.metroComboBoxQuantity.ItemHeight = 23;
+            this.metroComboBoxQuantity.Items.AddRange(new object[] {
+            "10000",
+            "20000",
+            "50000",
+            "100000"});
+            this.metroComboBoxQuantity.Location = new System.Drawing.Point(65, 67);
+            this.metroComboBoxQuantity.Name = "metroComboBoxQuantity";
+            this.metroComboBoxQuantity.Size = new System.Drawing.Size(121, 29);
+            this.metroComboBoxQuantity.TabIndex = 13;
+            this.metroComboBoxQuantity.UseSelectable = true;
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(15, 118);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(44, 13);
+            this.label13.TabIndex = 12;
+            this.label13.Text = "If below";
+            // 
+            // checkBoxBuyHollows
+            // 
+            this.checkBoxBuyHollows.AutoSize = true;
+            this.checkBoxBuyHollows.Location = new System.Drawing.Point(16, 27);
+            this.checkBoxBuyHollows.Name = "checkBoxBuyHollows";
+            this.checkBoxBuyHollows.Size = new System.Drawing.Size(82, 17);
+            this.checkBoxBuyHollows.TabIndex = 11;
+            this.checkBoxBuyHollows.Text = "Buy hollows";
+            this.checkBoxBuyHollows.UseVisualStyleBackColor = true;
+            // 
+            // numericUpDownIfBelow
+            // 
+            this.numericUpDownIfBelow.Increment = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.numericUpDownIfBelow.Location = new System.Drawing.Point(65, 116);
+            this.numericUpDownIfBelow.Maximum = new decimal(new int[] {
+            1000000,
+            0,
+            0,
+            0});
+            this.numericUpDownIfBelow.Minimum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.numericUpDownIfBelow.Name = "numericUpDownIfBelow";
+            this.numericUpDownIfBelow.Size = new System.Drawing.Size(70, 20);
+            this.numericUpDownIfBelow.TabIndex = 10;
+            this.numericUpDownIfBelow.Value = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(13, 70);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(46, 13);
+            this.label12.TabIndex = 9;
+            this.label12.Text = "Quantity";
+            // 
+            // groupBox10
+            // 
+            this.groupBox10.Controls.Add(this.checkBoxShootBack);
+            this.groupBox10.Controls.Add(this.checkBoxEquipSails);
+            this.groupBox10.Controls.Add(this.metroLabel2);
+            this.groupBox10.Controls.Add(this.numericUpDownRestart);
+            this.groupBox10.Controls.Add(this.checkboxShootOnlyFullHp);
+            this.groupBox10.Location = new System.Drawing.Point(24, 170);
+            this.groupBox10.Name = "groupBox10";
+            this.groupBox10.Size = new System.Drawing.Size(196, 181);
+            this.groupBox10.TabIndex = 10;
+            this.groupBox10.TabStop = false;
+            this.groupBox10.Text = "Options";
+            // 
+            // checkBoxShootBack
+            // 
+            this.checkBoxShootBack.AutoSize = true;
+            this.checkBoxShootBack.Location = new System.Drawing.Point(15, 118);
+            this.checkBoxShootBack.Name = "checkBoxShootBack";
+            this.checkBoxShootBack.Size = new System.Drawing.Size(81, 17);
+            this.checkBoxShootBack.TabIndex = 8;
+            this.checkBoxShootBack.Text = "Shoot back";
+            this.checkBoxShootBack.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxEquipSails
+            // 
+            this.checkBoxEquipSails.AutoSize = true;
+            this.checkBoxEquipSails.Location = new System.Drawing.Point(15, 50);
+            this.checkBoxEquipSails.Name = "checkBoxEquipSails";
+            this.checkBoxEquipSails.Size = new System.Drawing.Size(76, 17);
+            this.checkBoxEquipSails.TabIndex = 7;
+            this.checkBoxEquipSails.Text = "Equip sails";
+            this.checkBoxEquipSails.UseVisualStyleBackColor = true;
+            // 
             // metroLabel2
             // 
             this.metroLabel2.AutoSize = true;
-            this.metroLabel2.Location = new System.Drawing.Point(24, 244);
+            this.metroLabel2.Location = new System.Drawing.Point(73, 88);
             this.metroLabel2.Name = "metroLabel2";
-            this.metroLabel2.Size = new System.Drawing.Size(68, 19);
-            this.metroLabel2.TabIndex = 11;
-            this.metroLabel2.Text = "Map view:";
+            this.metroLabel2.Size = new System.Drawing.Size(118, 19);
+            this.metroLabel2.TabIndex = 6;
+            this.metroLabel2.Text = "Restart bot (hours)";
             // 
-            // metroTrackBar1
+            // numericUpDownRestart
             // 
-            this.metroTrackBar1.BackColor = System.Drawing.Color.Transparent;
-            this.metroTrackBar1.Location = new System.Drawing.Point(24, 266);
-            this.metroTrackBar1.Name = "metroTrackBar1";
-            this.metroTrackBar1.Size = new System.Drawing.Size(364, 23);
-            this.metroTrackBar1.TabIndex = 10;
-            this.metroTrackBar1.Text = "metroTrackBar1";
+            this.numericUpDownRestart.Location = new System.Drawing.Point(15, 88);
+            this.numericUpDownRestart.Maximum = new decimal(new int[] {
+            48,
+            0,
+            0,
+            0});
+            this.numericUpDownRestart.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDownRestart.Name = "numericUpDownRestart";
+            this.numericUpDownRestart.Size = new System.Drawing.Size(52, 20);
+            this.numericUpDownRestart.TabIndex = 5;
+            this.numericUpDownRestart.Value = new decimal(new int[] {
+            48,
+            0,
+            0,
+            0});
+            // 
+            // checkboxShootOnlyFullHp
+            // 
+            this.checkboxShootOnlyFullHp.AutoSize = true;
+            this.checkboxShootOnlyFullHp.Location = new System.Drawing.Point(15, 27);
+            this.checkboxShootOnlyFullHp.Name = "checkboxShootOnlyFullHp";
+            this.checkboxShootOnlyFullHp.Size = new System.Drawing.Size(110, 17);
+            this.checkboxShootOnlyFullHp.TabIndex = 4;
+            this.checkboxShootOnlyFullHp.Text = "Shoot only full HP";
+            this.checkboxShootOnlyFullHp.UseVisualStyleBackColor = true;
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(82, 176);
+            this.label6.Location = new System.Drawing.Point(82, 154);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(78, 13);
+            this.label6.Size = new System.Drawing.Size(94, 13);
             this.label6.TabIndex = 8;
-            this.label6.Text = "License status:";
+            this.label6.Text = "License valid until:";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(201, 176);
+            this.label2.Location = new System.Drawing.Point(201, 154);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(10, 13);
             this.label2.TabIndex = 9;
@@ -484,7 +663,6 @@ namespace ArmadaCollector
             // 
             // metroTabPage1
             // 
-            this.metroTabPage1.Controls.Add(this.attackedInfoGroupbox);
             this.metroTabPage1.Controls.Add(this.groupBox7);
             this.metroTabPage1.Controls.Add(this.groupBox1);
             this.metroTabPage1.HorizontalScrollbarBarColor = true;
@@ -498,38 +676,6 @@ namespace ArmadaCollector
             this.metroTabPage1.VerticalScrollbarBarColor = true;
             this.metroTabPage1.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage1.VerticalScrollbarSize = 10;
-            // 
-            // attackedInfoGroupbox
-            // 
-            this.attackedInfoGroupbox.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.attackedInfoGroupbox.Controls.Add(this.label36);
-            this.attackedInfoGroupbox.Controls.Add(this.label37);
-            this.attackedInfoGroupbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.attackedInfoGroupbox.Location = new System.Drawing.Point(521, 241);
-            this.attackedInfoGroupbox.Name = "attackedInfoGroupbox";
-            this.attackedInfoGroupbox.Size = new System.Drawing.Size(469, 175);
-            this.attackedInfoGroupbox.TabIndex = 4;
-            this.attackedInfoGroupbox.TabStop = false;
-            this.attackedInfoGroupbox.Text = "Attacked Info";
-            this.attackedInfoGroupbox.Enter += new System.EventHandler(this.attackedInfoGroupbox_Enter);
-            // 
-            // label36
-            // 
-            this.label36.AutoSize = true;
-            this.label36.Location = new System.Drawing.Point(191, 31);
-            this.label36.Name = "label36";
-            this.label36.Size = new System.Drawing.Size(12, 16);
-            this.label36.TabIndex = 8;
-            this.label36.Text = "\\";
-            // 
-            // label37
-            // 
-            this.label37.AutoSize = true;
-            this.label37.Location = new System.Drawing.Point(15, 31);
-            this.label37.Name = "label37";
-            this.label37.Size = new System.Drawing.Size(131, 16);
-            this.label37.TabIndex = 7;
-            this.label37.Text = "Attacked by Players:";
             // 
             // groupBox7
             // 
@@ -549,7 +695,7 @@ namespace ArmadaCollector
             this.groupBox7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox7.Location = new System.Drawing.Point(520, 3);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(478, 231);
+            this.groupBox7.Size = new System.Drawing.Size(478, 413);
             this.groupBox7.TabIndex = 3;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Current Session";
@@ -665,20 +811,23 @@ namespace ArmadaCollector
             // groupBox1
             // 
             this.groupBox1.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.groupBox1.Controls.Add(this.label21);
             this.groupBox1.Controls.Add(this.groupBox9);
-            this.groupBox1.Controls.Add(this.groupBox8);
+            this.groupBox1.Controls.Add(this.gainedelixirlabel);
+            this.groupBox1.Controls.Add(this.label17);
+            this.groupBox1.Controls.Add(this.label18);
+            this.groupBox1.Controls.Add(this.gainedgoldlabel);
+            this.groupBox1.Controls.Add(this.gaineddiamondlabel);
             this.groupBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox1.Location = new System.Drawing.Point(3, 3);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(511, 413);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Resources";
+            this.groupBox1.Text = "Total:";
             // 
             // groupBox9
             // 
-            this.groupBox9.Controls.Add(this.label35);
-            this.groupBox9.Controls.Add(this.progressBar1);
             this.groupBox9.Controls.Add(this.ranklabel);
             this.groupBox9.Controls.Add(this.label34);
             this.groupBox9.Controls.Add(this.levellabel);
@@ -689,33 +838,17 @@ namespace ArmadaCollector
             this.groupBox9.Controls.Add(this.label28);
             this.groupBox9.Controls.Add(this.usernamelabel);
             this.groupBox9.Controls.Add(this.label25);
-            this.groupBox9.Location = new System.Drawing.Point(7, 153);
+            this.groupBox9.Location = new System.Drawing.Point(7, 200);
             this.groupBox9.Name = "groupBox9";
-            this.groupBox9.Size = new System.Drawing.Size(488, 254);
+            this.groupBox9.Size = new System.Drawing.Size(488, 207);
             this.groupBox9.TabIndex = 9;
             this.groupBox9.TabStop = false;
             this.groupBox9.Text = "User";
             // 
-            // label35
-            // 
-            this.label35.AutoSize = true;
-            this.label35.Location = new System.Drawing.Point(11, 184);
-            this.label35.Name = "label35";
-            this.label35.Size = new System.Drawing.Size(30, 16);
-            this.label35.TabIndex = 16;
-            this.label35.Text = "HP:";
-            // 
-            // progressBar1
-            // 
-            this.progressBar1.Location = new System.Drawing.Point(121, 184);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(345, 23);
-            this.progressBar1.TabIndex = 15;
-            // 
             // ranklabel
             // 
             this.ranklabel.AutoSize = true;
-            this.ranklabel.Location = new System.Drawing.Point(118, 143);
+            this.ranklabel.Location = new System.Drawing.Point(162, 154);
             this.ranklabel.Name = "ranklabel";
             this.ranklabel.Size = new System.Drawing.Size(12, 16);
             this.ranklabel.TabIndex = 14;
@@ -724,7 +857,7 @@ namespace ArmadaCollector
             // label34
             // 
             this.label34.AutoSize = true;
-            this.label34.Location = new System.Drawing.Point(10, 143);
+            this.label34.Location = new System.Drawing.Point(54, 154);
             this.label34.Name = "label34";
             this.label34.Size = new System.Drawing.Size(43, 16);
             this.label34.TabIndex = 13;
@@ -733,7 +866,7 @@ namespace ArmadaCollector
             // levellabel
             // 
             this.levellabel.AutoSize = true;
-            this.levellabel.Location = new System.Drawing.Point(119, 116);
+            this.levellabel.Location = new System.Drawing.Point(163, 127);
             this.levellabel.Name = "levellabel";
             this.levellabel.Size = new System.Drawing.Size(12, 16);
             this.levellabel.TabIndex = 12;
@@ -742,7 +875,7 @@ namespace ArmadaCollector
             // label32
             // 
             this.label32.AutoSize = true;
-            this.label32.Location = new System.Drawing.Point(11, 116);
+            this.label32.Location = new System.Drawing.Point(55, 127);
             this.label32.Name = "label32";
             this.label32.Size = new System.Drawing.Size(44, 16);
             this.label32.TabIndex = 11;
@@ -751,7 +884,7 @@ namespace ArmadaCollector
             // useridlabel
             // 
             this.useridlabel.AutoSize = true;
-            this.useridlabel.Location = new System.Drawing.Point(119, 89);
+            this.useridlabel.Location = new System.Drawing.Point(163, 100);
             this.useridlabel.Name = "useridlabel";
             this.useridlabel.Size = new System.Drawing.Size(12, 16);
             this.useridlabel.TabIndex = 10;
@@ -760,7 +893,7 @@ namespace ArmadaCollector
             // label30
             // 
             this.label30.AutoSize = true;
-            this.label30.Location = new System.Drawing.Point(11, 89);
+            this.label30.Location = new System.Drawing.Point(55, 100);
             this.label30.Name = "label30";
             this.label30.Size = new System.Drawing.Size(53, 16);
             this.label30.TabIndex = 9;
@@ -769,7 +902,7 @@ namespace ArmadaCollector
             // guildlabel
             // 
             this.guildlabel.AutoSize = true;
-            this.guildlabel.Location = new System.Drawing.Point(119, 62);
+            this.guildlabel.Location = new System.Drawing.Point(163, 73);
             this.guildlabel.Name = "guildlabel";
             this.guildlabel.Size = new System.Drawing.Size(12, 16);
             this.guildlabel.TabIndex = 8;
@@ -778,7 +911,7 @@ namespace ArmadaCollector
             // label28
             // 
             this.label28.AutoSize = true;
-            this.label28.Location = new System.Drawing.Point(11, 62);
+            this.label28.Location = new System.Drawing.Point(55, 73);
             this.label28.Name = "label28";
             this.label28.Size = new System.Drawing.Size(42, 16);
             this.label28.TabIndex = 7;
@@ -787,40 +920,16 @@ namespace ArmadaCollector
             // usernamelabel
             // 
             this.usernamelabel.AutoSize = true;
-            this.usernamelabel.Location = new System.Drawing.Point(119, 33);
+            this.usernamelabel.Location = new System.Drawing.Point(163, 44);
             this.usernamelabel.Name = "usernamelabel";
             this.usernamelabel.Size = new System.Drawing.Size(12, 16);
             this.usernamelabel.TabIndex = 6;
             this.usernamelabel.Text = "\\";
             // 
-            // label25
-            // 
-            this.label25.AutoSize = true;
-            this.label25.Location = new System.Drawing.Point(11, 33);
-            this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(74, 16);
-            this.label25.TabIndex = 0;
-            this.label25.Text = "Username:";
-            // 
-            // groupBox8
-            // 
-            this.groupBox8.Controls.Add(this.label21);
-            this.groupBox8.Controls.Add(this.gainedelixirlabel);
-            this.groupBox8.Controls.Add(this.label17);
-            this.groupBox8.Controls.Add(this.gainedgoldlabel);
-            this.groupBox8.Controls.Add(this.label18);
-            this.groupBox8.Controls.Add(this.gaineddiamondlabel);
-            this.groupBox8.Location = new System.Drawing.Point(20, 21);
-            this.groupBox8.Name = "groupBox8";
-            this.groupBox8.Size = new System.Drawing.Size(308, 126);
-            this.groupBox8.TabIndex = 8;
-            this.groupBox8.TabStop = false;
-            this.groupBox8.Text = "Gained";
-            // 
             // label21
             // 
             this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(34, 74);
+            this.label21.Location = new System.Drawing.Point(30, 86);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(49, 16);
             this.label21.TabIndex = 12;
@@ -829,7 +938,7 @@ namespace ArmadaCollector
             // gainedelixirlabel
             // 
             this.gainedelixirlabel.AutoSize = true;
-            this.gainedelixirlabel.Location = new System.Drawing.Point(153, 74);
+            this.gainedelixirlabel.Location = new System.Drawing.Point(149, 86);
             this.gainedelixirlabel.Name = "gainedelixirlabel";
             this.gainedelixirlabel.Size = new System.Drawing.Size(15, 16);
             this.gainedelixirlabel.TabIndex = 13;
@@ -838,7 +947,7 @@ namespace ArmadaCollector
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(34, 57);
+            this.label17.Location = new System.Drawing.Point(30, 69);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(50, 16);
             this.label17.TabIndex = 10;
@@ -847,7 +956,7 @@ namespace ArmadaCollector
             // gainedgoldlabel
             // 
             this.gainedgoldlabel.AutoSize = true;
-            this.gainedgoldlabel.Location = new System.Drawing.Point(153, 57);
+            this.gainedgoldlabel.Location = new System.Drawing.Point(149, 69);
             this.gainedgoldlabel.Name = "gainedgoldlabel";
             this.gainedgoldlabel.Size = new System.Drawing.Size(15, 16);
             this.gainedgoldlabel.TabIndex = 11;
@@ -856,7 +965,7 @@ namespace ArmadaCollector
             // label18
             // 
             this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(34, 41);
+            this.label18.Location = new System.Drawing.Point(30, 53);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(76, 16);
             this.label18.TabIndex = 8;
@@ -865,7 +974,7 @@ namespace ArmadaCollector
             // gaineddiamondlabel
             // 
             this.gaineddiamondlabel.AutoSize = true;
-            this.gaineddiamondlabel.Location = new System.Drawing.Point(153, 41);
+            this.gaineddiamondlabel.Location = new System.Drawing.Point(149, 53);
             this.gaineddiamondlabel.Name = "gaineddiamondlabel";
             this.gaineddiamondlabel.Size = new System.Drawing.Size(15, 16);
             this.gaineddiamondlabel.TabIndex = 9;
@@ -894,15 +1003,14 @@ namespace ArmadaCollector
             this.updateFormTimer.Enabled = true;
             this.updateFormTimer.Tick += new System.EventHandler(this.updateFormTimer_Tick);
             // 
-            // metroButton2
+            // label25
             // 
-            this.metroButton2.Location = new System.Drawing.Point(6, 176);
-            this.metroButton2.Name = "metroButton2";
-            this.metroButton2.Size = new System.Drawing.Size(235, 41);
-            this.metroButton2.TabIndex = 5;
-            this.metroButton2.Text = "Remove";
-            this.metroButton2.UseSelectable = true;
-            this.metroButton2.Click += new System.EventHandler(this.metroButton2_Click);
+            this.label25.AutoSize = true;
+            this.label25.Location = new System.Drawing.Point(55, 44);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(74, 16);
+            this.label25.TabIndex = 0;
+            this.label25.Text = "Username:";
             // 
             // Form1
             // 
@@ -934,16 +1042,19 @@ namespace ArmadaCollector
             this.groupBox3.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            this.groupBox11.ResumeLayout(false);
+            this.groupBox11.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownIfBelow)).EndInit();
+            this.groupBox10.ResumeLayout(false);
+            this.groupBox10.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRestart)).EndInit();
             this.metroTabPage1.ResumeLayout(false);
-            this.attackedInfoGroupbox.ResumeLayout(false);
-            this.attackedInfoGroupbox.PerformLayout();
             this.groupBox7.ResumeLayout(false);
             this.groupBox7.PerformLayout();
             this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.groupBox9.ResumeLayout(false);
             this.groupBox9.PerformLayout();
-            this.groupBox8.ResumeLayout(false);
-            this.groupBox8.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -984,15 +1095,10 @@ namespace ArmadaCollector
         private System.Windows.Forms.CheckBox shootnpccheckbox;
         private System.Windows.Forms.CheckBox avoidislandcheckbox;
         private System.Windows.Forms.CheckBox shootmonstercheckbox;
-        private System.Windows.Forms.GroupBox attackedInfoGroupbox;
-        private System.Windows.Forms.Label label36;
-        private System.Windows.Forms.Label label37;
         private System.Windows.Forms.GroupBox groupBox7;
         private System.Windows.Forms.Label collectedElixirs;
         private System.Windows.Forms.Label label24;
         private System.Windows.Forms.GroupBox groupBox9;
-        private System.Windows.Forms.Label label35;
-        private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Label ranklabel;
         private System.Windows.Forms.Label label34;
         private System.Windows.Forms.Label levellabel;
@@ -1002,8 +1108,6 @@ namespace ArmadaCollector
         private System.Windows.Forms.Label guildlabel;
         private System.Windows.Forms.Label label28;
         private System.Windows.Forms.Label usernamelabel;
-        private System.Windows.Forms.Label label25;
-        private System.Windows.Forms.GroupBox groupBox8;
         private System.Windows.Forms.Label label21;
         private System.Windows.Forms.Label gainedelixirlabel;
         private System.Windows.Forms.Label label17;
@@ -1019,8 +1123,21 @@ namespace ArmadaCollector
         private MetroLabel metroLabel1;
         private MetroTextBox metroTextBox1;
         private MetroButton metroButton1;
-        private MetroLabel metroLabel2;
-        private MetroTrackBar metroTrackBar1;
         private MetroButton metroButton2;
+        private System.Windows.Forms.GroupBox groupBox10;
+        private System.Windows.Forms.CheckBox checkboxShootOnlyFullHp;
+        private MetroLabel metroLabel2;
+        private System.Windows.Forms.NumericUpDown numericUpDownRestart;
+        private MetroLabel metroLabel4;
+        private MetroLabel metroLabel3;
+        private System.Windows.Forms.GroupBox groupBox11;
+        private MetroComboBox metroComboBoxQuantity;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.CheckBox checkBoxBuyHollows;
+        private System.Windows.Forms.NumericUpDown numericUpDownIfBelow;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.CheckBox checkBoxEquipSails;
+        private System.Windows.Forms.CheckBox checkBoxShootBack;
+        private System.Windows.Forms.Label label25;
     }
 }

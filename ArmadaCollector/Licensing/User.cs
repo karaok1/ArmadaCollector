@@ -8,6 +8,7 @@ namespace ArmadaCollector.Licensing
 {
     public class User
     {
-        public string id { get; set; }
+        public string hWID { get; set; }
+        public DateTime timeStamp { get; set; }
     }
 }
