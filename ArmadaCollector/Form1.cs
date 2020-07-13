@@ -157,7 +157,7 @@ namespace ArmadaCollector
                 }
                 else if (browser.Address.Contains("play"))
                 {
-                    Bot.Log("Game is loading...");
+                    Bot.Log("Loading game...");
                     browser.ExecuteScriptAsync("document.getElementsByClassName('btn btn-sm btn-default')[2].click();");
                     browser.GetSourceAsync().ContinueWith(taskHtml =>
                     {
