@@ -17,6 +17,11 @@ using DiscordRPC;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using MetroFramework.Controls;
+using Timer = System.Threading.Timer;
+using System.Reflection.Emit;
+using ArmadaCollector.Utils;
+using System.Timers;
+using System.Globalization;
 
 namespace ArmadaCollector
 {
@@ -31,8 +36,9 @@ namespace ArmadaCollector
         public Thread worker;
         private DiscordRpcClient client;
         delegate void SetTextCallback(string text);
-        public HttpClient httpClient = new HttpClient();
-        Licensing.User user = new Licensing.User();
+        public HttpResponseMessage clientCore = new HttpResponseMessage();
+        public System.Timers.Timer fakeMove = new System.Timers.Timer(6 * 1000); //one hour in milliseconds
+
 
         public Form1()
         {
@@ -42,7 +48,7 @@ namespace ArmadaCollector
             this.OnStartUp();
             tabControl1.SelectedTab = tabPage1;
         }
-
+        
         public void InitializeChromium()
         {
             CefSettings settings = new CefSettings();
@@ -60,14 +66,22 @@ namespace ArmadaCollector
             browser.LifeSpanHandler = lifeSpanHandler;
             browser.FrameLoadEnd += Browser_FrameLoadEnd;
             browser.LoadingStateChanged += ChromeBrowser_LoadingStateChanged;
+            browser.JavascriptMessageReceived += Browser_JavascriptMessageReceived;
             browser.ConsoleMessage += Browser_ConsoleMessage;
             browser.Focus();
 #if (DEBUG)
             browser.IsBrowserInitializedChanged += Browser_IsBrowserInitializedChanged;
-            string read = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"client_core.js");
+            string read = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"client_c.js");
             var encText = StringCipher.Encrypt(read, "enjoylowlife");
-            File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"client_core.bin", encText);
+            File.WriteAllText(@"C:\Users\Abdullah\Desktop\ArColWeb\src\public\source\client_c.bin", encText);
+            File.WriteAllText(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.FullName + "\\Release\\" + @"client_c.bin", encText);
 #endif
+        }
+
+        private void Browser_JavascriptMessageReceived(object sender, JavascriptMessageReceivedEventArgs e)
+        {
+            var msg = (string) e.Message;
+            Bot.Log(msg);
         }
 
 #if (DEBUG)
@@ -83,31 +97,34 @@ namespace ArmadaCollector
 
         private void Browser_ConsoleMessage(object sender, ConsoleMessageEventArgs e)
         {
-            if (e.Level >= LogSeverity.Error) return;
-
             var task = Task.Run(() => {
 
-                var m = Regex.Match(e.Message, @"collected: ([0-9]+).([a-z]+)", RegexOptions.None);
-
+                var m = Regex.Match(e.Message, @"collected: ([0-9]+).([#a-z]+)", RegexOptions.None);
                 if (!m.Success) return;
 
                 var value = m.Groups[1].Value;
                 var type = m.Groups[2].Value;
 
-                Bot.Log("Collected " + value + " " + type);
                 switch (type)
                 {
                     case "golds":
-                        Client.collectedGolds += Convert.ToInt32(value);
+                        Client.gainedGold = Client.collectedGolds += Convert.ToInt32(value);
+                        Bot.Log("Collected " + value + " " + type);
                         break;
                     case "diamonds":
-                        Client.collectedDiamonds += Convert.ToInt32(value);
+                        Client.gainedDiamond = Client.collectedDiamonds += Convert.ToInt32(value);
+                        Bot.Log("Collected " + value + " " + type);
                         break;
-                    case "exps":
-                        Client.collectedExps += Convert.ToInt32(value);
+                    case "#money":
+                        Client.gainedDiamond = Client.collectedDiamonds += Convert.ToInt32(value);
+                        Bot.Log("Collected " + value + " " + "diamonds");
                         break;
                     case "elixirs":
-                        Client.collectedElixirs += Convert.ToInt32(value);
+                        Client.gainedElixir = Client.collectedElixirs += Convert.ToInt32(value);
+                        Bot.Log("Collected Elixir");
+                        break;
+                    case "box":
+                        Client.collectedGlows += Convert.ToInt32(value);
                         break;
                 }
             });
@@ -140,7 +157,7 @@ namespace ArmadaCollector
                 }
                 else if (browser.Address.Contains("play"))
                 {
-                    Bot.Log("Game is loading...");
+                    Bot.Log("Loading game...");
                     browser.ExecuteScriptAsync("document.getElementsByClassName('btn btn-sm btn-default')[2].click();");
                     browser.GetSourceAsync().ContinueWith(taskHtml =>
                     {
@@ -151,25 +168,41 @@ namespace ArmadaCollector
                             BotClick(450, 340);
                         }
 
-                        //Task.Delay(5000).ContinueWith(action =>
-                        //{
-                        //    string lines = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"api-req.js");
-                        //    browser.EvaluateScriptAsync(lines);
-                        //});
-
+                        if (Client.manuelStart)
+                        Task.Delay(5000).ContinueWith(action =>
+                        {
+                            var script = @"(function () {
+                                if (ArmadaBattle && ArmadaBattle.Game && ArmadaBattle.Game.myPlayer)
+                                     return true;
+                                })();";
+                            var result = browser.EvaluateScriptAsync(script).ContinueWith(x =>
+                            {
+                                var response = x.Result;
+                                if (response.Success && response.Result != null)
+                                {
+                                    if ((dynamic)response.Result == true)
+                                    {
+                                        Task.Delay(2000).ContinueWith(a =>
+                                        {
+                                            Bot.Log("Restarting...");
+                                            BootstrapClient();
+                                        });
+                                    }
+                                }
+                            });
+                        });
                     });
                     Client.ready = true;
                 }
             }
         }
 
-        private void ChromeBrowser_LoadingStateChanged(object sender, LoadingStateChangedEventArgs e)
+        private async void ChromeBrowser_LoadingStateChanged(object sender, LoadingStateChangedEventArgs e)
         {
             if (e.IsLoading == false)
             {
                 if (browser.Address.Contains("play"))
                 {
-
                 }
             }
         }
@@ -181,102 +214,179 @@ namespace ArmadaCollector
             form1 = this;
         }
 
-        private void OnStartUp()
+        private async void OnStartUp()
         {
             this.StartLocalProxy();
             loginButton.Enabled = false;
-            SetDiscordRPC();
+            await AppUpdater.RunUpdater();
+            Authenticate();
         }
 
-        private void SetDiscordRPC()
+        private void OnTimedEvent(object source, ElapsedEventArgs e, DateTime expirationDate)
         {
-            httpClient.BaseAddress = new Uri("http://13.53.182.223:8080/");
-            httpClient.DefaultRequestHeaders.Accept.Clear();
-            httpClient.DefaultRequestHeaders.Accept.Add(
-                new MediaTypeWithQualityHeaderValue("application/json"));
+            DateTime current = DateTime.Now;
 
-            client = new DiscordRpcClient("689514388272578673");
-
-            //Subscribe to events
-            client.OnReady += (sender, e) =>
+            if (expirationDate < current)
             {
-                Bot.Log("Discord client is ready: " + e.User.Username);
-                user.id = e.User.ID.ToString();
-                if (checkRole().GetAwaiter().GetResult())
+                try
                 {
-                    Bot.Log("You are now playing as a Beta Tester");
+                    this.Invoke((MethodInvoker)delegate {
+                        ShowErrorAndClose("License expired!");
+                    });
+                }
+                catch
+                {
+                    Application.Exit();
+                }
+            }
+        }
+
+        public void Authenticate()
+        {
+            Licensing.User user = new Licensing.User();
+            user.hWID = Program.fingerprint;
+            user.timeStamp = DateTime.Now;
+
+            try
+            {
+                var res = CheckLicense(user).GetAwaiter().GetResult();
+                var aTimer = new System.Timers.Timer(6 * 1000); //one hour in milliseconds
+                aTimer.Enabled = true;
+
+                if (res.status)
+                {
                     this.Invoke((MethodInvoker)delegate
                     {
-                        label2.Text = "Beta Tester";
+                        label2.Text = res.expirationDate.ToString();
+                        Bot.Log("License valid until: " + res.expirationDate);
+                        DownloadFiles();
                     });
+                    aTimer.Elapsed += new ElapsedEventHandler((sender, e) => OnTimedEvent(sender, e, res.expirationDate));
+                    aTimer.Start();
                 }
                 else
                 {
-                    this.Invoke((MethodInvoker)delegate
+                    try
                     {
-                        DialogResult dialog =
-                            MessageBox.Show("You don't have an appropriate role to use the bot! Please contact on the Discord server for more information.",
-                            "Discord error",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Error);
-                        // close the form on the forms thread
-                        this.Close();
-                    });
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            buttonStart.Invoke((MethodInvoker)(() =>
+                            {
+                                buttonStart.Enabled = false;
+                            }));
+                            Bot.Log(
+                                "You don't have a valid license to use the bot! " +
+                                "Please contact on the Discord server for more information.");
+                        });
+                    }
+                    catch
+                    {
+                        Application.Exit();
+                    }
                 }
-            };
-
-            client.OnConnectionFailed += (sender, e) =>
+            }
+            catch (Exception ex)
             {
-
-                this.Invoke((MethodInvoker)delegate
+                buttonStart.Invoke((MethodInvoker)(() =>
                 {
-                    DialogResult dialog =
-                        MessageBox.Show("Connection failed.",
-                        "Discord error",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
-                    // close the form on the forms thread
-                    this.Close();
-                });
-            };
-
-            client.OnPresenceUpdate += (sender, e) =>
-            {
-            };
-
-            //Connect to the RPC
-            client.Initialize();
-
-            //Set the rich presence
-            //Call this as many times as you want and anywhere in your code.
-            client.SetPresence(new RichPresence()
-            {
-                Details = "Collecting stuff",
-                State = "Botting",
-                Assets = new Assets()
-                {
-                    LargeImageKey = "standart_image",
-                    LargeImageText = "Saisama's ArmadaBattle bot",
-                    SmallImageKey = "standart_image"
-                }
-            });
+                    buttonStart.Enabled = false;
+                }));
+                ShowErrorAndClose(ex.Message);
+            }
         }
 
-        [Obfuscation(Exclude = false, Feature = "constants")]
-        private async Task<bool> checkRole()
+        private async void DownloadFiles()
         {
             try
             {
-                HttpResponseMessage response = await httpClient.PostAsJsonAsync("checkRole", user);
-                response.EnsureSuccessStatusCode();
-                RoleValidation roleValidation = await response.Content.ReadAsAsync<RoleValidation>();
-                return roleValidation.hasRole;
+                using (var httpClient = new HttpClient())
+                {
+#if DEBUG
+                    //httpClient.BaseAddress = new Uri("https://akchan.me/");
+                    httpClient.BaseAddress = new Uri("http://localhost:5000/");
+#else
+                    httpClient.BaseAddress = new Uri("https://akchan.me/");
+#endif
+                    httpClient.DefaultRequestHeaders.Accept.Clear();
+                    httpClient.DefaultRequestHeaders.Accept.Add(
+                        new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    using (clientCore = httpClient.GetAsync("source/client_c.bin").Result)
+                    {
+                        clientCore.EnsureSuccessStatusCode();
+                        // Download client_c.bin
+                        if (clientCore.IsSuccessStatusCode)
+                        {
+                            Bot.Log("Downloaded necessary files");
+                            Client.scriptCode = await clientCore.Content.ReadAsStringAsync();
+                        }
+                        else
+                        {
+                            ShowErrorAndClose("Failed to download necessary files.");
+                        }
+                    }
+                }
             }
-            catch (HttpRequestException ex)
+            catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
-                return false;
+                ShowErrorAndClose(ex.Message);
             }
+        }
+
+        [Obfuscation(Exclude = false, Feature = "constants")]
+        private async Task<RoleValidation> CheckLicense(Licensing.User user)
+        {
+            try
+            {
+                using (var httpClient = new HttpClient())
+                {
+#if DEBUG
+                    //httpClient.BaseAddress = new Uri("https://akchan.me/");
+                    httpClient.BaseAddress = new Uri("http://localhost:5000/");
+#else
+                    httpClient.BaseAddress = new Uri("https://akchan.me/");
+#endif
+                    httpClient.DefaultRequestHeaders.Accept.Clear();
+                    httpClient.DefaultRequestHeaders.Accept.Add(
+                        new MediaTypeWithQualityHeaderValue("application/json"));
+
+
+                    //var crypto = new ClsCrypto("lol");
+                    //DateTime result;
+                    //DateTime.TryParse(crypto.Encrypt(user.timeStamp.ToString()), out result);
+                    //user.timeStamp = result;
+
+                    using (var response = httpClient.PostAsJsonAsync("api/checkLicense", user).Result)
+                    {
+                        if (response.IsSuccessStatusCode)
+                        {
+                            RoleValidation roleValidation = response.Content.ReadAsAsync<RoleValidation>().Result;
+                            return roleValidation;
+                        }
+                        else
+                        {
+                            Bot.Log("Can't connect to the license server.");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowErrorAndClose(ex.Message);
+            }
+            return new RoleValidation();
+        }
+        
+        private void ShowErrorAndClose(string _text)
+        {
+            AutoClosingMessageBox.Show(
+                text: _text,
+                caption: "Error",
+                timeout: 5000,
+                buttons: MessageBoxButtons.OK,
+                defaultResult: DialogResult.Yes);
+            // close the form on the forms thread
+            Application.Exit();
         }
 
         private void SaveUserSettings()
@@ -288,12 +398,16 @@ namespace ArmadaCollector
             Settings.Default.CollectBox = collectboxcheckbox.Checked;
             Settings.Default.ShootMonster = shootmonstercheckbox.Checked;
             Settings.Default.ShootNPC = shootnpccheckbox.Checked;
+            Settings.Default.BuyHollows = checkBoxBuyCannonballs.Checked;
+            Settings.Default.EquipSails = checkBoxEquipSails.Checked;
+            Settings.Default.RepairAt = (int) numericUpDown1.Value;
+            Settings.Default.ShootBack = checkBoxShootBack.Checked;
             Settings.Default.Save();
         }
 
         public void StartLocalProxy()
         {
-            Server server = new Server();
+            //Server server = new Server();
             //this.localThread = new Thread(server.Start);
             //this.localThread.IsBackground = false;
             //this.localThread.Start();
@@ -330,7 +444,12 @@ namespace ArmadaCollector
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (rememberMeCheckbox.Checked)
+            {
+                Settings.Default.TotalDiamond += Client.gainedDiamond;
+                Settings.Default.TotalElixir += Client.gainedElixir;
+                Settings.Default.TotalGold += Client.gainedGold;
                 SaveUserSettings();
+            }
             else
                 ResetUserSettings();
 
@@ -346,11 +465,15 @@ namespace ArmadaCollector
 
             this.Text += $" v{ versionInfo.FileVersion }";
 
-            Bot.Log("Armadabattle bot - ArmadaCollector");
+            Bot.Log("Armada Battle bot - ArmadaCollector");
             Bot.Log("Current version: v" + assembly.GetName().Version.ToString(3));
+            Bot.Log("HWID: " + Program.fingerprint);
         }
         private void GetUserSettings()
         {
+            metroComboBoxQuantity.SelectedIndex = 1;
+            metroComboBoxCbType.SelectedIndex = 1;
+            metroComboBoxEquipPirates.SelectedIndex = 2;
             userTextBox.Text = Settings.Default.Username;
             passTextBox.Text = Settings.Default.Password;
             rememberMeCheckbox.Checked = Settings.Default.Remember;
@@ -358,6 +481,13 @@ namespace ArmadaCollector
             shootmonstercheckbox.Checked = Settings.Default.ShootMonster;
             shootnpccheckbox.Checked = Settings.Default.ShootNPC;
             collectboxcheckbox.Checked = Settings.Default.CollectBox;
+            checkBoxBuyCannonballs.Checked = Settings.Default.BuyHollows;
+            checkBoxEquipSails.Checked = Settings.Default.EquipSails;
+            numericUpDown1.Value = (decimal) Settings.Default.RepairAt;
+            checkBoxShootBack.Checked = Settings.Default.ShootBack;
+            gaineddiamondlabel.Text = Settings.Default.TotalDiamond.ToString();
+            gainedelixirlabel.Text = Settings.Default.TotalElixir.ToString();
+            gainedgoldlabel.Text = Settings.Default.TotalGold.ToString();
         }
 
         private void ResetUserSettings()
@@ -365,8 +495,14 @@ namespace ArmadaCollector
             Properties.Settings.Default.Reset();
         }
 
-        private async void ButtonStart_Click(object sender, EventArgs e)
+        private void ButtonStart_Click(object sender, EventArgs e)
         {
+            double restartInterval = (double) numericUpDownRestart.Value * 60 * 60 * 3600;
+            System.Timers.Timer restartTimer = new System.Timers.Timer(restartInterval);
+            if (fakeMove == null)
+                fakeMove = new System.Timers.Timer(6 * 1000); //one hour in millisecond
+            restartTimer.Elapsed += RestartTimer_Elapsed;
+
             if (buttonStart.Text == "Start")
             {
                 if (!Client.ready)
@@ -375,61 +511,154 @@ namespace ArmadaCollector
                     return;
                 }
 
-                // === Replacement for Logic.js === 
-
-
-                string lines = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"client_core.bin");
-                var decText = StringCipher.Decrypt(lines, "enjoylowlife");
-                var viewPort = 1000 + metroTrackBar1.Value * 70;
-
-                await browser.EvaluateScriptAsync("window.bs={cb:false,sa:false,sn:false,ai:false,repLimit:50,vp:1000}");
-                await browser.EvaluateScriptAsync("bs.vp=" + viewPort + ";");
-                if (collectboxcheckbox.Checked)
-                    await browser.EvaluateScriptAsync("bs.cb=true;");
-                if (shootmonstercheckbox.Checked)
-                    await browser.EvaluateScriptAsync("bs.sa=true;");
-                if (shootnpccheckbox.Checked)
-                    await browser.EvaluateScriptAsync("bs.sn=true;");
-                if (avoidislandcheckbox.Checked)
-                    await browser.EvaluateScriptAsync("bs.ai=true;");
-                await browser.EvaluateScriptAsync("bs.repLimit=" + numericUpDown1.Value + ";");
-                if (collectboxcheckbox.Checked || shootnpccheckbox.Checked || shootmonstercheckbox.Checked)
+                Client.manuelStart = true;
+                if (restartInterval > 0)
                 {
-                    await browser.EvaluateScriptAsync(decText); // change this !!!
-
-                    if (listBox1.Items.Count > 0)
-                    {
-                        foreach (var item in listBox1.Items)
-                        {
-                            await browser.EvaluateScriptAsync("shootObj.push(\"" + item + "\");")
-                                .ContinueWith(t =>
-                                {
-                                    if (!t.IsFaulted)
-                                    {
-                                        var response = t.Result;
-                                        Bot.Log(response.Message);
-                                    }
-                                });
-                        }
-                    }
-
-                    Client.sessionStartTime = DateTime.Now;
-                    Client.running = true;
-                    buttonStart.Text = "Stop";
-                    Bot.Log("Bot started.");
+                    restartTimer.Start();
                 }
-                else
-                {
-                    Bot.Log("Check at least one checkbox to perform tasks!");
-                }
+                BootstrapClient();
             }
             else if (buttonStart.Text == "Stop")
             {
+                restartTimer.Stop();
+                restartTimer.Close();
                 buttonStart.Text = "Start";
                 browser.Reload();
-                await browser.EvaluateScriptAsync("stopBot();");
                 Client.collecting = false;
+                Client.manuelStart = false;
             }
+        }
+
+        private void RestartTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            browser.Reload();
+            BootstrapClient();
+        }
+
+        private async void BootstrapClient()
+        {
+            string lines = "";
+#if DEBUG
+            // === Replacement for Logic.js === 
+            lines = File.ReadAllText(@"C:\Users\Abdullah\Desktop\ArColWeb\src\public\source\client_c.bin");
+#else
+            lines = Client.scriptCode;
+#endif
+            var decText = StringCipher.Decrypt(lines, "enjoylowlife");
+            int quantity = 10000;
+            string cannonBallType = "_id.cannonballDivisional";
+            string pirateType = "Juliette";
+            metroComboBoxQuantity.Invoke((MethodInvoker)(() =>
+            {
+                quantity = Convert.ToInt32(metroComboBoxQuantity.Text);
+            }));
+            metroComboBoxCbType.Invoke((MethodInvoker)(() =>
+            {
+                cannonBallType = metroComboBoxCbType.Text;
+                switch (cannonBallType)
+                {
+                    case "Divisional":
+                        cannonBallType = "_id.cannonballDivisional";
+                        break;
+                    case "Hollow":
+                        cannonBallType = "_id.cannonballHollow";
+                        break;
+                    case "Stone":
+                        cannonBallType = "_id.cannonballStone";
+                        break;
+                    case "Slime":
+                        cannonBallType = "_id.cannonballSlime";
+                        break;
+                    default:
+                        cannonBallType = "_id.cannonballHollow";
+                        break;
+                }
+            }));
+            metroComboBoxEquipPirates.Invoke((MethodInvoker)(() =>
+            {
+                pirateType = metroComboBoxEquipPirates.Text;
+            }));
+            await browser.EvaluateScriptAsync("let shootObj=[];" +
+                "bs = {" +
+                "   cb:false," +
+                "   sa:false," +
+                "   buyCannonball:{}," +
+                "   equipPirates:{}," +
+                "   sn:false," +
+                "   ai:false," +
+                "   onlyFullHp:" +
+                "   false," +
+                "   repLimit:50" +
+                "}");
+            if (collectboxcheckbox.Checked)
+                await browser.EvaluateScriptAsync("bs.cb=true;");
+            if (shootmonstercheckbox.Checked)
+                await browser.EvaluateScriptAsync("bs.sa=true;");
+            if (shootnpccheckbox.Checked)
+                await browser.EvaluateScriptAsync("bs.sn=true;");
+            if (avoidislandcheckbox.Checked)
+                await browser.EvaluateScriptAsync("bs.ai=true;");
+            if (checkBoxShootBack.Checked)
+                await browser.EvaluateScriptAsync("bs.shootBack=true;");
+            if (checkBoxEquipSails.Checked)
+                await browser.EvaluateScriptAsync("bs.equipSails=true;");
+            if (checkboxShootOnlyFullHp.Checked)
+                await browser.EvaluateScriptAsync("bs.onlyFullHp=true;");
+            if (checkBoxBuyCannonballs.Checked)
+            {
+                await browser.EvaluateScriptAsync("bs.buyCannonball.active=true;" +
+                    "bs.buyCannonball.type=" + cannonBallType + ";" +
+                    "bs.buyCannonball.quantity= " + quantity + ";" + 
+                    "bs.buyCannonball.ifBelow= " + numericUpDownIfBelow.Value + ";");
+            }
+            if (metroCheckBoxEquipPirates.Checked)
+            {
+                await browser.EvaluateScriptAsync("bs.equipPirates.active=true;" +
+                    "bs.equipPirates.type=" + pirateType + ";");
+            }
+            await browser.EvaluateScriptAsync("bs.repLimit=" + numericUpDown1.Value + ";");
+            if (collectboxcheckbox.Checked || shootnpccheckbox.Checked || shootmonstercheckbox.Checked)
+            {
+                await browser.EvaluateScriptAsync(decText); // change this !!!
+
+                if (listBox1.Items.Count > 0)
+                {
+                    foreach (var item in listBox1.Items)
+                    {
+                        await browser.EvaluateScriptAsync("shootObj.push(\"" + item + "\");")
+                            .ContinueWith(t =>
+                            {
+                                if (!t.IsFaulted)
+                                {
+                                    var response = t.Result;
+                                    Bot.Log(response.Message);
+                                }
+                            });
+                    }
+                }
+
+                Client.sessionStartTime = DateTime.Now;
+                Client.running = true;
+                buttonStart.Text = "Stop";
+                Bot.Log("Bot started.");
+            }
+            else
+            {
+                Bot.Log("Check at least one checkbox to perform tasks!");
+            }
+            if (fakeMove.Enabled != true)
+            {
+                fakeMove.Enabled = true;
+                fakeMove.Elapsed += FakeMove_Elapsed;
+                fakeMove.Start();
+            }
+        }
+
+        private void FakeMove_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            Bot.Log("Fake move called");
+            var rand = new Random();
+            BotClick(rand.Next(10, 990), rand.Next(0, 300));
         }
 
         private void ExecuteJavaScript()
@@ -448,10 +677,10 @@ namespace ArmadaCollector
         {
             browser.GetBrowser().GetHost().SendMouseMoveEvent(miniMapCoordX, miniMapCoordY, false, CefEventFlags.LeftMouseButton);
             Thread.Sleep(50);
-            browser.GetBrowser().GetHost().SendMouseClickEvent(miniMapCoordX, miniMapCoordY, MouseButtonType.Left, false, 1, CefEventFlags.LeftMouseButton);
-            Thread.Sleep(50);
-            browser.GetBrowser().GetHost().SendMouseClickEvent(miniMapCoordX, miniMapCoordY, MouseButtonType.Left, true, 1, CefEventFlags.LeftMouseButton);
-            Thread.Sleep(100);
+            //browser.GetBrowser().GetHost().SendMouseClickEvent(miniMapCoordX, miniMapCoordY, MouseButtonType.Left, false, 1, CefEventFlags.LeftMouseButton);
+            //Thread.Sleep(50);
+            //browser.GetBrowser().GetHost().SendMouseClickEvent(miniMapCoordX, miniMapCoordY, MouseButtonType.Left, true, 1, CefEventFlags.LeftMouseButton);
+            //Thread.Sleep(100);
         }
 
         private void buttonStop_Click(object sender, EventArgs e)
@@ -461,15 +690,10 @@ namespace ArmadaCollector
                 {
                     worker.Abort();
                 }
+            fakeMove.Stop();
+            fakeMove.Enabled = false;
             Bot.Log("Bot stopped.");
             Client.running = false;
-            Client.collectedDiamonds = 0;
-            Client.collectedElixirs = 0;
-            Client.collectedGlows = 0;
-            buttonStart.Invoke((MethodInvoker)(() =>
-            {
-                buttonStart.Enabled = true;
-            }));
         }
 
         private void updateFormTimer_Tick(object sender, EventArgs e)
@@ -491,6 +715,9 @@ namespace ArmadaCollector
                     collectedGolds.Text = Client.collectedGolds.ToString();
                     collectedElixirs.Text = Client.collectedElixirs.ToString();
                     collectedGlows.Text = Client.collectedGlows.ToString();
+                    gaineddiamondlabel.Text = Client.gainedDiamond.ToString();
+                    gainedgoldlabel.Text = Client.gainedGold.ToString();
+                    gainedelixirlabel.Text = Client.gainedElixir.ToString();
                     int num = Convert.ToInt32(new DateTime(DateTime.Now.Subtract(Client.sessionStartTime).Ticks).ToString("d "));
                     num--;
                     this.runtimeLabel.Text = num + " days " + new DateTime(DateTime.Now.Subtract(Client.sessionStartTime).Ticks).ToString("HH:mm:ss");
@@ -502,8 +729,6 @@ namespace ArmadaCollector
                 Bot.Log(e.ToString());
             }
         }
-
-
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -556,6 +781,11 @@ namespace ArmadaCollector
             {
                 MessageBox.Show("Select one or more items to delete.");
             }
+        }
+
+        private void groupBox11_Enter(object sender, EventArgs e)
+        {
+
         }
     }
 }

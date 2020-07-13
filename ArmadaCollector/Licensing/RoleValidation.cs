@@ -8,7 +8,7 @@ namespace ArmadaCollector.Licensing
 {
 	public class RoleValidation
 	{
-		public string userId { get; set; }
-		public bool hasRole { get; set; }
+		public bool status { get; set; }
+		public DateTime expirationDate { get; set; }
 	}
 }
