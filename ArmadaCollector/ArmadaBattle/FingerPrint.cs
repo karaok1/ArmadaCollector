@@ -20,8 +20,8 @@ namespace ArmadaCollector.ArmadaBattle
                 fingerPrint = GetHash("CPU >> " + cpuId()
             + "\nBIOS >> "
              + biosId() + "\nBASE >> " + baseId()
-                            + "\nDISK >> " + diskId() + "\nVIDEO >> " +
-            videoId() + "\nMAC >> " + macId()
+            //                + "\nDISK >> " + diskId() + "\nVIDEO >> " +
+            //videoId() + "\nMAC >> " + macId()
                                      );
             }
             return fingerPrint;

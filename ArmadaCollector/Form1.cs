@@ -37,6 +37,8 @@ namespace ArmadaCollector
         private DiscordRpcClient client;
         delegate void SetTextCallback(string text);
         public HttpResponseMessage clientCore = new HttpResponseMessage();
+        public System.Timers.Timer fakeMove = new System.Timers.Timer(6 * 1000); //one hour in milliseconds
+
 
         public Form1()
         {
@@ -46,7 +48,7 @@ namespace ArmadaCollector
             this.OnStartUp();
             tabControl1.SelectedTab = tabPage1;
         }
-
+        
         public void InitializeChromium()
         {
             CefSettings settings = new CefSettings();
@@ -300,6 +302,7 @@ namespace ArmadaCollector
                 using (var httpClient = new HttpClient())
                 {
 #if DEBUG
+                    //httpClient.BaseAddress = new Uri("https://akchan.me/");
                     httpClient.BaseAddress = new Uri("http://localhost:5000/");
 #else
                     httpClient.BaseAddress = new Uri("https://akchan.me/");
@@ -338,6 +341,7 @@ namespace ArmadaCollector
                 using (var httpClient = new HttpClient())
                 {
 #if DEBUG
+                    //httpClient.BaseAddress = new Uri("https://akchan.me/");
                     httpClient.BaseAddress = new Uri("http://localhost:5000/");
 #else
                     httpClient.BaseAddress = new Uri("https://akchan.me/");
@@ -394,13 +398,10 @@ namespace ArmadaCollector
             Settings.Default.CollectBox = collectboxcheckbox.Checked;
             Settings.Default.ShootMonster = shootmonstercheckbox.Checked;
             Settings.Default.ShootNPC = shootnpccheckbox.Checked;
-            Settings.Default.BuyHollows = checkBoxBuyHollows.Checked;
+            Settings.Default.BuyHollows = checkBoxBuyCannonballs.Checked;
             Settings.Default.EquipSails = checkBoxEquipSails.Checked;
             Settings.Default.RepairAt = (int) numericUpDown1.Value;
             Settings.Default.ShootBack = checkBoxShootBack.Checked;
-            Settings.Default.TotalDiamond = Client.gainedDiamond;
-            Settings.Default.TotalElixir = Client.gainedElixir;
-            Settings.Default.TotalGold = Client.gainedGold;
             Settings.Default.Save();
         }
 
@@ -443,7 +444,12 @@ namespace ArmadaCollector
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (rememberMeCheckbox.Checked)
+            {
+                Settings.Default.TotalDiamond += Client.gainedDiamond;
+                Settings.Default.TotalElixir += Client.gainedElixir;
+                Settings.Default.TotalGold += Client.gainedGold;
                 SaveUserSettings();
+            }
             else
                 ResetUserSettings();
 
@@ -459,13 +465,15 @@ namespace ArmadaCollector
 
             this.Text += $" v{ versionInfo.FileVersion }";
 
-            Bot.Log("Armadabattle bot - ArmadaCollector");
+            Bot.Log("Armada Battle bot - ArmadaCollector");
             Bot.Log("Current version: v" + assembly.GetName().Version.ToString(3));
             Bot.Log("HWID: " + Program.fingerprint);
         }
         private void GetUserSettings()
         {
             metroComboBoxQuantity.SelectedIndex = 1;
+            metroComboBoxCbType.SelectedIndex = 1;
+            metroComboBoxEquipPirates.SelectedIndex = 2;
             userTextBox.Text = Settings.Default.Username;
             passTextBox.Text = Settings.Default.Password;
             rememberMeCheckbox.Checked = Settings.Default.Remember;
@@ -473,7 +481,7 @@ namespace ArmadaCollector
             shootmonstercheckbox.Checked = Settings.Default.ShootMonster;
             shootnpccheckbox.Checked = Settings.Default.ShootNPC;
             collectboxcheckbox.Checked = Settings.Default.CollectBox;
-            checkBoxBuyHollows.Checked = Settings.Default.BuyHollows;
+            checkBoxBuyCannonballs.Checked = Settings.Default.BuyHollows;
             checkBoxEquipSails.Checked = Settings.Default.EquipSails;
             numericUpDown1.Value = (decimal) Settings.Default.RepairAt;
             checkBoxShootBack.Checked = Settings.Default.ShootBack;
@@ -491,6 +499,8 @@ namespace ArmadaCollector
         {
             double restartInterval = (double) numericUpDownRestart.Value * 60 * 60 * 3600;
             System.Timers.Timer restartTimer = new System.Timers.Timer(restartInterval);
+            if (fakeMove == null)
+                fakeMove = new System.Timers.Timer(6 * 1000); //one hour in millisecond
             restartTimer.Elapsed += RestartTimer_Elapsed;
 
             if (buttonStart.Text == "Start")
@@ -536,11 +546,50 @@ namespace ArmadaCollector
 #endif
             var decText = StringCipher.Decrypt(lines, "enjoylowlife");
             int quantity = 10000;
+            string cannonBallType = "_id.cannonballDivisional";
+            string pirateType = "Juliette";
             metroComboBoxQuantity.Invoke((MethodInvoker)(() =>
             {
                 quantity = Convert.ToInt32(metroComboBoxQuantity.Text);
             }));
-            await browser.EvaluateScriptAsync("window.bs={cb:false,sa:false,sn:false,ai:false,onlyFullHp:false,repLimit:50}");
+            metroComboBoxCbType.Invoke((MethodInvoker)(() =>
+            {
+                cannonBallType = metroComboBoxCbType.Text;
+                switch (cannonBallType)
+                {
+                    case "Divisional":
+                        cannonBallType = "_id.cannonballDivisional";
+                        break;
+                    case "Hollow":
+                        cannonBallType = "_id.cannonballHollow";
+                        break;
+                    case "Stone":
+                        cannonBallType = "_id.cannonballStone";
+                        break;
+                    case "Slime":
+                        cannonBallType = "_id.cannonballSlime";
+                        break;
+                    default:
+                        cannonBallType = "_id.cannonballHollow";
+                        break;
+                }
+            }));
+            metroComboBoxEquipPirates.Invoke((MethodInvoker)(() =>
+            {
+                pirateType = metroComboBoxEquipPirates.Text;
+            }));
+            await browser.EvaluateScriptAsync("let shootObj=[];" +
+                "bs = {" +
+                "   cb:false," +
+                "   sa:false," +
+                "   buyCannonball:{}," +
+                "   equipPirates:{}," +
+                "   sn:false," +
+                "   ai:false," +
+                "   onlyFullHp:" +
+                "   false," +
+                "   repLimit:50" +
+                "}");
             if (collectboxcheckbox.Checked)
                 await browser.EvaluateScriptAsync("bs.cb=true;");
             if (shootmonstercheckbox.Checked)
@@ -555,11 +604,17 @@ namespace ArmadaCollector
                 await browser.EvaluateScriptAsync("bs.equipSails=true;");
             if (checkboxShootOnlyFullHp.Checked)
                 await browser.EvaluateScriptAsync("bs.onlyFullHp=true;");
-            if (checkBoxBuyHollows.Checked)
+            if (checkBoxBuyCannonballs.Checked)
             {
-                await browser.EvaluateScriptAsync("bs.buyHollow=true;");
-                await browser.EvaluateScriptAsync("bs.buyHollowQuantity= " + quantity + ";");
-                await browser.EvaluateScriptAsync("bs.buyHollowIfBelow= " + numericUpDownIfBelow.Value + ";");
+                await browser.EvaluateScriptAsync("bs.buyCannonball.active=true;" +
+                    "bs.buyCannonball.type=" + cannonBallType + ";" +
+                    "bs.buyCannonball.quantity= " + quantity + ";" + 
+                    "bs.buyCannonball.ifBelow= " + numericUpDownIfBelow.Value + ";");
+            }
+            if (metroCheckBoxEquipPirates.Checked)
+            {
+                await browser.EvaluateScriptAsync("bs.equipPirates.active=true;" +
+                    "bs.equipPirates.type=" + pirateType + ";");
             }
             await browser.EvaluateScriptAsync("bs.repLimit=" + numericUpDown1.Value + ";");
             if (collectboxcheckbox.Checked || shootnpccheckbox.Checked || shootmonstercheckbox.Checked)
@@ -591,6 +646,19 @@ namespace ArmadaCollector
             {
                 Bot.Log("Check at least one checkbox to perform tasks!");
             }
+            if (fakeMove.Enabled != true)
+            {
+                fakeMove.Enabled = true;
+                fakeMove.Elapsed += FakeMove_Elapsed;
+                fakeMove.Start();
+            }
+        }
+
+        private void FakeMove_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            Bot.Log("Fake move called");
+            var rand = new Random();
+            BotClick(rand.Next(10, 990), rand.Next(0, 300));
         }
 
         private void ExecuteJavaScript()
@@ -609,10 +677,10 @@ namespace ArmadaCollector
         {
             browser.GetBrowser().GetHost().SendMouseMoveEvent(miniMapCoordX, miniMapCoordY, false, CefEventFlags.LeftMouseButton);
             Thread.Sleep(50);
-            browser.GetBrowser().GetHost().SendMouseClickEvent(miniMapCoordX, miniMapCoordY, MouseButtonType.Left, false, 1, CefEventFlags.LeftMouseButton);
-            Thread.Sleep(50);
-            browser.GetBrowser().GetHost().SendMouseClickEvent(miniMapCoordX, miniMapCoordY, MouseButtonType.Left, true, 1, CefEventFlags.LeftMouseButton);
-            Thread.Sleep(100);
+            //browser.GetBrowser().GetHost().SendMouseClickEvent(miniMapCoordX, miniMapCoordY, MouseButtonType.Left, false, 1, CefEventFlags.LeftMouseButton);
+            //Thread.Sleep(50);
+            //browser.GetBrowser().GetHost().SendMouseClickEvent(miniMapCoordX, miniMapCoordY, MouseButtonType.Left, true, 1, CefEventFlags.LeftMouseButton);
+            //Thread.Sleep(100);
         }
 
         private void buttonStop_Click(object sender, EventArgs e)
@@ -622,6 +690,8 @@ namespace ArmadaCollector
                 {
                     worker.Abort();
                 }
+            fakeMove.Stop();
+            fakeMove.Enabled = false;
             Bot.Log("Bot stopped.");
             Client.running = false;
         }
@@ -711,6 +781,11 @@ namespace ArmadaCollector
             {
                 MessageBox.Show("Select one or more items to delete.");
             }
+        }
+
+        private void groupBox11_Enter(object sender, EventArgs e)
+        {
+
         }
     }
 }
